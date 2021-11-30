@@ -20,10 +20,18 @@ object ProducerApp extends App {
   val producerConfig = config.getConfig("akka.kafka.producer")
   val producerSettings = ProducerSettings(producerConfig, new StringSerializer, new StringSerializer)
 
+  val lines = scala.io.Source.fromFile("/Users/ameykasbe/Desktop/kafka-spark/documents/LogGenerator.log").mkString
+  val result = lines.split("\n").toList
+
   val produce: Future[Done] =
-    Source(1 to 100)
-      .map(value => new ProducerRecord[String, String]("topic1", value.toString))
-      .runWith(Producer.plainSink(producerSettings))
+      Source(result)
+        .map(value => new ProducerRecord[String, String]("topic1", value.toString))
+        .runWith(Producer.plainSink(producerSettings))
+
+  //    Source(1 to 100)
+//      .map(value => new ProducerRecord[String, String]("topic1", value.toString))
+//      .runWith(Producer.plainSink(producerSettings))
+
 
   produce onComplete  {
     case Success(_) => println("Done"); system.terminate()
