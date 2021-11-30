@@ -19,13 +19,15 @@ object ProducerApp extends App {
   val config = ConfigFactory.load()
   val producerConfig = config.getConfig("akka.kafka.producer")
   val producerSettings = ProducerSettings(producerConfig, new StringSerializer, new StringSerializer)
+  val sourceLogFile = config.getString("emailservice.source-log-file")
+  val lines = scala.io.Source.fromFile(sourceLogFile).mkString
 
-  val lines = scala.io.Source.fromFile("/Users/ameykasbe/Desktop/kafka-spark/documents/LogGenerator.log").mkString
   val result = lines.split("\n").toList
 
+  val topicName = config.getString("spark.topic-name")
   val produce: Future[Done] =
       Source(result)
-        .map(value => new ProducerRecord[String, String]("topic1", value.toString))
+        .map(value => new ProducerRecord[String, String](topicName, value.toString))
         .runWith(Producer.plainSink(producerSettings))
 
   //    Source(1 to 100)

@@ -66,7 +66,7 @@ object s1 {
     )
 
     logger.info("Part3")
-    val msg_types = Set("ERROR", "INFO", "WARN","DEBUG", "1", "2")
+    val msg_types = Set("ERROR", "INFO", "WARN","DEBUG")
     val words = messages.map(_.value()).flatMap(_.split(" ")).filter(msg_types.contains(_))
 
     logger.info("Part4")
@@ -76,7 +76,10 @@ object s1 {
     countwords.print()
 
     logger.info("Part6")
-    countwords.saveAsTextFiles("/Users/ameykasbe/Desktop/kafka-spark/documents/report")
+    val config = ConfigFactory.load()
+    val reportSaveLocation = config.getString("emailservice.report-save-location")
+
+    countwords.saveAsTextFiles(reportSaveLocation)
     countwords.foreachRDD(rdd => {
       val map = rdd.collect().toMap
       if(map.get("ERROR").compare(Some(1)) > 1)
