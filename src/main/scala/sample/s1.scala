@@ -76,7 +76,7 @@ object s1 {
     countwords.print()
 
     logger.info("Part6")
-
+    countwords.saveAsTextFiles("/Users/ameykasbe/Desktop/kafka-spark/documents/report")
     countwords.foreachRDD(rdd => {
       val map = rdd.collect().toMap
       if(map.get("ERROR").compare(Some(1)) > 1)
