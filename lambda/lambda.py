@@ -11,7 +11,6 @@ def lambda_handler(event, context):
     ssm = boto3.client("ssm")
 
 
-
     bucket = event['Records'][0]['s3']['bucket']['name']
     key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding = 'utf-8')
 
@@ -24,6 +23,7 @@ def lambda_handler(event, context):
     instanceid = data.get('aws-instance-id')
     shellscript = data.get('shellscript')
     # instanceid = "i-07927351fee3bfe4b"
+
 
 
     response = ssm.send_command(
