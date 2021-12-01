@@ -78,7 +78,7 @@ object s1 {
     logger.info("Part6")
     val config = ConfigFactory.load()
     val reportSaveLocation = config.getString("emailservice.report-save-location")
-    val emailServiceLocation = config.getString("emailservice.report-save-location")
+    val emailServiceLocation = config.getString("emailservice.email-service")
     val emailService = "sh " + emailServiceLocation
     countwords.foreachRDD(rdd => {
       val map = rdd.collect().toMap
