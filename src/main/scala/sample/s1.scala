@@ -84,6 +84,7 @@ object s1 {
       val map = rdd.collect().toMap
       if(map.get("ERROR").compare(Some(1)) > 1)
       {
+        countwords.print()
         countwords.saveAsTextFiles(reportSaveLocation)
         //        logger.info("COUNT IS MORE THAN 2")
         Process(emailService)
