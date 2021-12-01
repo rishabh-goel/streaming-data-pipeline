@@ -47,7 +47,7 @@ ADD CONTENT HERE - LOG GEN, S3, LAMBDA, KAFKA, SPARK
 * With the help of ssm client, the shell script present in the EC2 instance is triggered using the `AWS-RunShellScript` document.
 
 
-### Setup AWS Lambda
+#### Setup AWS Lambda
 1. Setup AWS Lambda function
     1. Navigate to AWS Lambda
     2. Create Function
@@ -61,7 +61,7 @@ ADD CONTENT HERE - LOG GEN, S3, LAMBDA, KAFKA, SPARK
     2. Make appropriate changes according to your AWS instance and shell script name.
 
 
-### Setup Lambda Trigger
+#### Setup Lambda Trigger
 * Under Lambda > Functions > <your_lambda_function.py>, click on "Add Trigger", select trigger - "S3"
 * Select your S3 bucket.
 * Select "All object create events" as Event type.
@@ -87,7 +87,7 @@ ADD CONTENT HERE - LOG GEN, S3, LAMBDA, KAFKA, SPARK
   * Each source system will have an increased load from the connections
   * Each data pipelines have different requirements
   
-#### How Kafka helps
+### How Kafka helps
   * Kafka provides a messaging system between the services.
   * It follows distributed publish subscribe system, meaning, record is published and multiple consumers can subscribe to them.
   * It helps in decoupling system dependencies. 
