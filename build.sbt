@@ -29,3 +29,12 @@ libraryDependencies ++= Seq(
 )
 
 libraryDependencies += "com.typesafe.akka" %% "akka-stream-kafka" % "1.0-M1"
+
+val logbackVersion = "1.3.0-alpha10"
+val scalacticVersion = "3.2.9"
+
+libraryDependencies += "ch.qos.logback" % "logback-core" % logbackVersion
+libraryDependencies += "ch.qos.logback" % "logback-classic" % logbackVersion
+libraryDependencies += "org.scalactic" %% "scalactic" % scalacticVersion
+libraryDependencies += "org.scalatest" %% "scalatest" % scalacticVersion % Test
+libraryDependencies += "org.scalatest" %% "scalatest-featurespec" % scalacticVersion % Test
