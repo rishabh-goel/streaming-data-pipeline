@@ -41,13 +41,13 @@ ADD CONTENT HERE - LOG GEN, S3, LAMBDA, KAFKA, SPARK
 * Lambda function is a serverless compute service which can be triggered by some events.
 
 ### Algorithm
-* Python module boto3 is used to create, configure, and manage AWS services, such as Amazon EC2 and Amazon S3. 
+* Python module boto3 is used to create, configure, and manage AWS services, such as Amazon EC2 and Amazon S3 with the help of [AWS Systems Manager Agent](https://docs.aws.amazon.com/systems-manager/latest/userguide/ssm-agent.html). 
 * An SSM client is created. The created file's information including it's name is extracted from the event trigger. 
 * Configurations of the EC2 instance is present in `application.conf` like AWS EC2 instance id and the name of the shell script to be triggered in it.0 
 * With the help of ssm client, the shell script present in the EC2 instance is triggered using the `AWS-RunShellScript` document.
 
 
-### Setup AWS Lambda
+#### Setup AWS Lambda
 1. Setup AWS Lambda function
     1. Navigate to AWS Lambda
     2. Create Function
@@ -61,7 +61,7 @@ ADD CONTENT HERE - LOG GEN, S3, LAMBDA, KAFKA, SPARK
     2. Make appropriate changes according to your AWS instance and shell script name.
 
 
-### Setup Lambda Trigger
+#### Setup Lambda Trigger
 * Under Lambda > Functions > <your_lambda_function.py>, click on "Add Trigger", select trigger - "S3"
 * Select your S3 bucket.
 * Select "All object create events" as Event type.
@@ -87,7 +87,7 @@ ADD CONTENT HERE - LOG GEN, S3, LAMBDA, KAFKA, SPARK
   * Each source system will have an increased load from the connections
   * Each data pipelines have different requirements
   
-#### How Kafka helps
+### How Kafka helps
   * Kafka provides a messaging system between the services.
   * It follows distributed publish subscribe system, meaning, record is published and multiple consumers can subscribe to them.
   * It helps in decoupling system dependencies. 
