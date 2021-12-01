@@ -41,7 +41,7 @@ ADD CONTENT HERE - LOG GEN, S3, LAMBDA, KAFKA, SPARK
 * Lambda function is a serverless compute service which can be triggered by some events.
 
 ### Algorithm
-* Python module boto3 is used to create, configure, and manage AWS services, such as Amazon EC2 and Amazon S3. 
+* Python module boto3 is used to create, configure, and manage AWS services, such as Amazon EC2 and Amazon S3 with the help of [AWS Systems Manager Agent](https://docs.aws.amazon.com/systems-manager/latest/userguide/ssm-agent.html). 
 * An SSM client is created. The created file's information including it's name is extracted from the event trigger. 
 * Configurations of the EC2 instance is present in `application.conf` like AWS EC2 instance id and the name of the shell script to be triggered in it.0 
 * With the help of ssm client, the shell script present in the EC2 instance is triggered using the `AWS-RunShellScript` document.
