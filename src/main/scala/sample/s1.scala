@@ -78,14 +78,15 @@ object s1 {
     logger.info("Part6")
     val config = ConfigFactory.load()
     val reportSaveLocation = config.getString("emailservice.report-save-location")
-
-    countwords.saveAsTextFiles(reportSaveLocation)
+    val emailServiceLocation = config.getString("emailservice.report-save-location")
+    val emailService = "sh " + emailServiceLocation
     countwords.foreachRDD(rdd => {
       val map = rdd.collect().toMap
       if(map.get("ERROR").compare(Some(1)) > 1)
       {
-//        logger.info("COUNT IS MORE THAN 2")
-        Process("sh emailservice.sh")
+        countwords.saveAsTextFiles(reportSaveLocation)
+        //        logger.info("COUNT IS MORE THAN 2")
+        Process(emailService)
       }
       else
       {
