@@ -32,6 +32,27 @@ The intention of the project is to create a streaming data pipeline.
 ADD CONTENT HERE - LOG GEN, S3, LAMBDA, KAFKA, SPARK
 
 ## Deployment
+### Create IAM role for EC2
+* Navigate to Amazon AWS IAM service.
+* Click on Roles (left panel)
+* Click on "Create role"
+* Select EC2 as service
+* Add permissions - AmazonSSMManagedInstanceCore
+* Give the role a name - e.g. ec2-command-lambda-ssm
+
+### Create EC2 instance
+* Create an EC2 instance.
+  1. Navigate to AWS EC2
+  2. Click on Launch instance
+      1. Select "Amazon Linux 2 AMI (HVM), SSD Volume Type"
+      2. Download the key-pair in the process
+* Attach the created IAM role to the instance
+    1. Navigate to EC2 instance
+    2. Click on actions -> Security -> Modify IAM roles
+    3. Select the newly created role
+    4. Click on save with the created IAM role.
+
+
 ### [Amazon S3](https://aws.amazon.com/s3/)
 * Amazon Simple Storage Service (Amazon S3) is an object storage service.
 * The log files generated from the log generators running on the three EC2 instances are stored is S3 buckets.
@@ -46,6 +67,13 @@ ADD CONTENT HERE - LOG GEN, S3, LAMBDA, KAFKA, SPARK
 * Configurations of the EC2 instance is present in `application.conf` like AWS EC2 instance id and the name of the shell script to be triggered in it.0 
 * With the help of ssm client, the shell script present in the EC2 instance is triggered using the `AWS-RunShellScript` document.
 
+### Create IAM role for Lambda
+* Navigate to Amazon AWS IAM service.
+* Click on Roles (left panel)
+* Click on "Create role"
+* Select Lambda as service
+* Add permissions - AWSLambdaExecute, AmazonEC2ReadOnlyAccess, AmazonSSMFullAccess, AWSLambdaBasicExecutionRole-a8596e69-23fd-4654-8d64-c3ac96a18d0d, AWSLambdaS3ExecutionRole-922ed441-aeae-4f32-9c69-a1b251e1aa3e
+* Give the role a name - e.g. lambda-ssm
 
 #### Setup AWS Lambda
 1. Setup AWS Lambda function
@@ -56,6 +84,8 @@ ADD CONTENT HERE - LOG GEN, S3, LAMBDA, KAFKA, SPARK
             2. Select Python as language
             3. Enter the code from `lambda/lambda.py`
             4. Deploy
+    3. Setup IAM role - Click on Configuration -> Execution role -> Edit. Add the IAM role created above.
+    4. Increase timeout - Configuration -> General config -> Change timeout to 1 min
 2. Setup Lambda configuration
     1. Add a JSON file with the configuration from `lambda/application.json` file.
     2. Make appropriate changes according to your AWS instance and shell script name.
