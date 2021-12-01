@@ -69,7 +69,7 @@ ADD CONTENT HERE - LOG GEN, S3, LAMBDA, KAFKA, SPARK
 * Now, whenever there is any object creation in the specified S3 bucket, lambda function will be triggered in the specified EC2 instance.
 
 
-## Kafka
+## [Kafka](https://kafka.apache.org/)
 * Apache Kafka is an open source, distributed streaming platform that allows for the development of real-time event-driven applications.
 * It allows developers to make applications that continuously produce and consume streams of data records.
 
