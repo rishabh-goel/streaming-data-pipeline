@@ -11,13 +11,13 @@
     <tbody>
         <tr>
             <td>Rishabh Goel</td>
-            <td></td>
-            <td></td>
+            <td>653865205</td>
+            <td>rgoel20@uic.edu</td>
         </tr>
         <tr>
             <td>Samihan Nandedkar</td>
-            <td></td>
-            <td></td>
+            <td>667142409</td>
+            <td>snande3@uic.edu</td>
         </tr>
         <tr>
             <td>Amey Kasbe</td>

@@ -1,4 +1,4 @@
-package sample
+package SparkProject
 
 import com.typesafe.config.ConfigFactory
 import org.apache.kafka.clients.consumer.ConsumerConfig
@@ -26,7 +26,7 @@ import javax.mail._
 import javax.mail.internet._
 import scala.math.Ordered.orderingToOrdered
 import scala.sys.process.Process
-object s1 {
+object Spark {
 
 
   def main(args:Array[String]): Unit = {
@@ -82,11 +82,10 @@ object s1 {
     val emailService = "sh " + emailServiceLocation
     countwords.foreachRDD(rdd => {
       val map = rdd.collect().toMap
-      if(map.get("ERROR").compare(Some(1)) > 1)
+      val count: Int = map.getOrElse("ERROR",0);
+      if(count > 1)
       {
-        countwords.print()
-        countwords.saveAsTextFiles(reportSaveLocation)
-        //        logger.info("COUNT IS MORE THAN 2")
+        sc.parallelize(map.toSeq).saveAsTextFile(reportSaveLocation)
         Process(emailService)
       }
       else
