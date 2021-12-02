@@ -79,13 +79,14 @@ object Spark {
     val config = ConfigFactory.load()
     val reportSaveLocation = config.getString("emailservice.report-save-location")
     val emailServiceLocation = config.getString("emailservice.email-service")
+    val emailService = "sh "+emailServiceLocation
     countwords.foreachRDD(rdd => {
       val map = rdd.collect().toMap
       val count: Int = map.getOrElse("ERROR",0);
       if(count > 1)
       {
         sc.parallelize(map.toSeq).saveAsTextFile(reportSaveLocation)
-        Process("sh emailservice.sh",new File("path"))!
+        Process(emailService)!
       }
       else
       {
