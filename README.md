@@ -29,7 +29,8 @@
 
 ## Project Description
 The intention of the project is to create a streaming data pipeline. 
-ADD CONTENT HERE - LOG GEN, S3, LAMBDA, KAFKA, SPARK
+The logs generated over multiple EC2 instances are pushed to S3 bucket which trigger a Lambda function thereby interacting with Akka Actor System to fetch the newly generated log file and transmit it to the Spark Program through Kafka messaging system.
+
 
 ## Deployment
 ### Create IAM role for EC2
@@ -189,6 +190,36 @@ ADD CONTENT HERE - LOG GEN, S3, LAMBDA, KAFKA, SPARK
 * This makes Kafka very capable of handling all sorts of scenarios, from simple point-to-point messaging, to stock price feeds, to processing massive streams of website clicks, and even using Kafka like a database (yes, some people are doing that).
 
 
+### Spark
+
+Spark Streaming is an extension of the core Spark API that allows data engineers and data scientists to process real-time data from various sources including (but not limited to) Kafka, Flume, and Amazon Kinesis. This processed data can be pushed out to file systems, databases, and live dashboards.
+
+
+#### Execution steps:
+
+1. Fetch data from Kafka Topic for every 60 sec window duration.
+2. Take count of log entries which contain log message of type `INFO`, `ERROR`, `WARN` and `DEBUG`.
+3. Perform MapReduce on the count calculated in step 2.
+4. Save the counts in a report only if the count of ERROR messages exceed 1 in the time window.
+5. Trigger an email to the registered users with the generated report.
+
+
+#### Deployment Steps:
+
+1. Go the root directory of your project.
+2. Execute `sbt clean compile assembly` which will build a fat jar that will be used to run the spark job.
+3. From root folder, navigate to `target/scala-2.11` folder
+4. Execute the command `spark-submit --class SparkProject.Spark <name of your jar file>` to start the spark cluster and keep it running as long as kafka is streaming data.
+
+
+### AWS Simple Email Service
+
+Amazon Simple Email Service (SES) is a cost-effective, flexible, and scalable email service that enables developers to send mail from within any application. To set up email service on our EC2 instance, we can follow the link from [AWS SES Setup](https://medium.com/swlh/sending-email-from-aws-lambda-and-ec2-d5233aa0ae24).
+
+To trigger the email service after we have generated the report, we trigger `emailservice.sh` from our code which contains the command to zip the report and send it to the registered stakeholder.
+
+**NOTE**: With the zip of the report, another file `noname` gets attached to the mail. This file is created as we have used `uuencode` in our command. The uuencode command converts a file from its binary form into a 7-bit ASCII set of text characters. It is used for email clients that do not support MIME (Multipurpose Internet Mail Extensions).
+It may leave the ascii file as  "noname" or "unnamed"
 
 ## References
 1. Dr. Grechanik, Mark, (2020) Cloud Computing: Theory and Practice.
