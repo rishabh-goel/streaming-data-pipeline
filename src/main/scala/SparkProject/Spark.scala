@@ -32,16 +32,14 @@ object Spark {
   def main(args:Array[String]): Unit = {
     val logger: Logger = LoggerFactory.getLogger(this.getClass.getSimpleName)
 
-    val conf = ConfigFactory.load()
-    val NO_SPACE = ""
-
-    //Part 2 - Using Spark Streaming
+    // Setting up Kafka topic info
     val brokerId = "localhost:9092"
     val groupId = "GRP1"
     val topics = "topic1"
     val offset = "earliest"
     val sparkConf = new SparkConf().setMaster("local[2]").setAppName("SparkWordCount")
 
+    // Setting spark window of 60 seconds
     val ssc = new StreamingContext(sparkConf, Seconds(60))
 
     val sc = ssc.sparkContext
@@ -49,7 +47,7 @@ object Spark {
 
     val topicSet = topics.split(",").toSet
 
-    logger.info("Part1")
+    logger.info("Setting Kafka Parameters")
     val kafkaParams = Map[String, Object](
       ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG -> brokerId,
       ConsumerConfig.GROUP_ID_CONFIG -> groupId,
@@ -58,7 +56,7 @@ object Spark {
       ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG -> classOf[StringDeserializer]
     )
 
-    logger.info("Part2")
+    logger.info("Binding Kafka Parameters and topic")
     // Consumer will source from Kafka where it is subscribing to topic - topic1
     val messages = KafkaUtils.createDirectStream[String, String](
       ssc,
@@ -66,24 +64,26 @@ object Spark {
       ConsumerStrategies.Subscribe[String, String](topicSet, kafkaParams)
     )
 
-    logger.info("Part3")
+    logger.info("Extract Message type from the logs")
     val msg_types = Set("ERROR", "INFO", "WARN","DEBUG")
     val words = messages.map(_.value()).flatMap(_.split(" ")).filter(msg_types.contains(_))
 
-    logger.info("Part4")
+    logger.info("Map Reduce the logs on the basis of Log Message Type")
     val countwords = words.map(x => (x, 1)).reduceByKey(_ + _)
 
-    logger.info("Part5")
+    logger.info("Print the results on the screen")
     countwords.print()
 
-    logger.info("Part6")
+    logger.info("Extracting the Report Save Location and Location of Email service script")
     val config = ConfigFactory.load()
     val reportSaveLocation = config.getString("emailservice.report-save-location")
     val emailServiceLocation = config.getString("emailservice.email-service")
     val emailService = "sh "+emailServiceLocation
+
     countwords.foreachRDD(rdd => {
       val map = rdd.collect().toMap
-      val count: Int = map.getOrElse("ERROR",0);
+      val count: Int = map.getOrElse("ERROR",0)
+      // If the number of ERROR messages in the time window is >1, save the report and trigger email script
       if(count > 1)
       {
         sc.parallelize(map.toSeq).saveAsTextFile(reportSaveLocation)
