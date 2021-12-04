@@ -59,6 +59,7 @@ object Spark {
     )
 
     logger.info("Part2")
+    // Consumer will source from Kafka where it is subscribing to topic - topic1
     val messages = KafkaUtils.createDirectStream[String, String](
       ssc,
       LocationStrategies.PreferConsistent,
