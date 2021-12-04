@@ -34,13 +34,78 @@ The logs generated over multiple EC2 instances are pushed to S3 bucket which tri
 
 
 
-##Project Structure
+## Project Structure
 ![Project Structure](Docs/project_structure.png)
 
 This project can be divided into 4 major parts.
 1. Setup LogFileGenerator in multiple EC2 instance and update the log files in S3 bucket periodically.
 2. Create AWS Lambda function to  trigger akka actor whenever new logs arrive.
 3. Setup a Spark project for further processing of the logs message and to trigger the mail.
+
+## Running the Project
+
+### Steps to setup the environment. 
+
+#### Java 8 & sbt
+* Download and install Java 8 on your local system. 
+* Download and install sbt to compile and run the project. 
+
+#### Kafka & Zookeeper
+* Download and install Docker on local system. Download link can be found on the following link - https://docs.docker.com/desktop/windows/install/
+* Start the local docker server.
+* Install the [kafka-zookeeper](https://hub.docker.com/r/johnnypark/kafka-zookeeper/) image by jonnyparka by using the following command.
+```
+docker pull johnnypark/kafka-zookeeper
+```
+* Run the following command to start Zookeeper server and Kafka Server
+```
+docker run -p 2181:2181 -p 9092:9092 -e ADVERTISED_HOST=127.0.0.1  -e NUM_PARTITIONS=10 johnnypark/kafka-zookeeper
+```
+* The Kafka & zookeeper should be running in your system on port 9092 and 2181 respectively. 
+
+#### Apache Spark
+
+* Please install and setup Apache spark in local system. 
+* The following [link](https://medium.com/i-want-to-be-the-very-best/installing-apache-spark-on-windows-10-ce1c45de35ab) can be followed to achieve the same. 
+
+Once the pre-requisite setup is completed, to compile and run the application, follow the following steps. 
+
+```
+Note: 
+The sample log file present in src/main/resources/sampleLogfile.txt directory can be used a input to the application.
+
+Please change the location of input in application.conf (emailservice.source-log-file parameter).
+```
+
+#### Project Setup
+
+1. Please clone this repository on your system by running the following command. 
+```
+git clone https://github.com/ameykasbe/streaming-data-pipeline.git
+```
+2. Navigate to the cloned repository and run the following command to compile and build the project. 
+```
+sbt clean compile
+```
+
+#### Run Apache Spark:
+
+1. Please update the output directory location for the spark report to be generated.(Please give absolute path)
+2. Go the root directory of your project.
+3. Execute `sbt clean compile assembly` which will build a fat jar that will be used to run the spark job.
+4. From root folder, navigate to `target/scala-2.11` folder
+5. Execute the command `spark-submit --class SparkProject.Spark <name of your jar file>` to start the spark cluster and keep it running as long as kafka is streaming data.
+
+#### Run Akka Actor.
+
+1. Go the root directory of your project.
+2. Execute the following command to compile and run the application.
+```
+sbt clean compile run
+```
+3. Once compiled, please choose `[1] ProducerApp`, to start the execution of actor. 
+![img_1.png](img_1.png)
+
 
 ## Deployment
 
@@ -235,6 +300,28 @@ Updated LogFileGenerator Forked Repository - https://github.com/samihann/LogFile
 * Kafka producer streams the log events as topic to all of its subscribers, in our case, Spark. 
 * Subscriber Spark directly attached to the publisher of this stream will see an individual flow of elements
 
+### Kafka Setup on EC2 Instances
+
+#### Docker
+* Docker is a set of platform as a service (PaaS) products that use OS-level virtualization to deliver software in packages called containers.
+* To set up Kafka and Zookeeper on EC2 instance and locally, docker is used. 
+
+#### EC2 Instance Setup
+* To run the kafka-zookeeper server on EC2 instance `johnnypark/kafka-zookeeper` image is used.
+* Docker server is installed and started on EC2 instance. 
+* Install the [kafka-zookeeper](https://hub.docker.com/r/johnnypark/kafka-zookeeper/) image by jonnyparka by using the following command.
+```
+docker pull johnnypark/kafka-zookeeper
+```
+* Run the following command to start Zookeeper server and Kafka Server
+```
+docker run -p 2181:2181 -p 9092:9092 -e ADVERTISED_HOST=127.0.0.1  -e NUM_PARTITIONS=10 johnnypark/kafka-zookeeper
+```
+Zookeeper Status:
+
+![img.png](img.png)
+
+
 ### Spark
 
 Spark Streaming is an extension of the core Spark API that allows data engineers and data scientists to process real-time data from various sources including (but not limited to) Kafka, Flume, and Amazon Kinesis. This processed data can be pushed out to file systems, databases, and live dashboards.
@@ -247,14 +334,6 @@ Spark Streaming is an extension of the core Spark API that allows data engineers
 3. Perform MapReduce on the count calculated in step 2.
 4. Save the counts in a report only if the count of ERROR messages exceed 1 in the time window.
 5. Trigger an email to the registered users with the generated report.
-
-
-#### Local Setup Steps:
-
-1. Go the root directory of your project.
-2. Execute `sbt clean compile assembly` which will build a fat jar that will be used to run the spark job.
-3. From root folder, navigate to `target/scala-2.11` folder
-4. Execute the command `spark-submit --class SparkProject.Spark <name of your jar file>` to start the spark cluster and keep it running as long as kafka is streaming data.
 
 
 ### AWS Simple Email Service
