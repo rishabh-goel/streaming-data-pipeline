@@ -249,7 +249,7 @@ Spark Streaming is an extension of the core Spark API that allows data engineers
 5. Trigger an email to the registered users with the generated report.
 
 
-#### Deployment Steps:
+#### Local Setup Steps:
 
 1. Go the root directory of your project.
 2. Execute `sbt clean compile assembly` which will build a fat jar that will be used to run the spark job.
