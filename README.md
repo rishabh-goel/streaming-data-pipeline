@@ -229,6 +229,11 @@ Updated LogFileGenerator Forked Repository - https://github.com/samihann/LogFile
 * So consumers can keep receiving messages, even if a broker crashes.
 * This makes Kafka very capable of handling all sorts of scenarios, from simple point-to-point messaging, to stock price feeds, to processing massive streams of website clicks, and even using Kafka like a database (yes, some people are doing that).
 
+### Kafka in Streaming-data-pipeline project
+* Please refer to `ProducerApp.scala`
+* Log events are streamed from the static log file to Kafka producer using Akka Streams.
+* Kafka producer streams the log events as topic to all of its subscribers, in our case, Spark. 
+* Subscriber Spark directly attached to the publisher of this stream will see an individual flow of elements
 
 ### Spark
 
