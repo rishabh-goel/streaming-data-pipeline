@@ -32,7 +32,18 @@ The intention of the project is to create a streaming data pipeline.
 The logs generated over multiple EC2 instances are pushed to S3 bucket which trigger a Lambda function thereby interacting with Akka Actor System to fetch the newly generated log file and transmit it to the Spark Program through Kafka messaging system.
 
 
+
+
+##Project Structure
+![Project Structure](Docs/project_structure.png)
+
+This project can be divided into 4 major parts.
+1. Setup LogFileGenerator in multiple EC2 instance and update the log files in S3 bucket periodically.
+2. Create AWS Lambda function to  trigger akka actor whenever new logs arrive.
+3. Setup a Spark project for further processing of the logs message and to trigger the mail.
+
 ## Deployment
+
 ### Create IAM role for EC2
 * Navigate to Amazon AWS IAM service.
 * Click on Roles (left panel)
@@ -58,6 +69,35 @@ The logs generated over multiple EC2 instances are pushed to S3 bucket which tri
 * Amazon Simple Storage Service (Amazon S3) is an object storage service.
 * The log files generated from the log generators running on the three EC2 instances are stored is S3 buckets.
 * As soon as a file is inserted into S3 bucket, lambda function is triggered which in turn triggers (Setup and detailed explanation below).
+
+### LogFileGenerator
+
+Updated LogFileGenerator Forked Repository - https://github.com/samihann/LogFileGenerator.git
+* LogFileGenerator is deployed on three EC2 instance which are sequentially updating the logs to the S3 bucket.
+* The LogFileGenerator  for each instance should be periodically running in EC2 instance at designated time and keep on appending the logs
+  to messages a single log file. And the updated log file should be placed in S3 bucket from where the Lambda Function can access it.
+
+* To achieve this functionality there are few changes made to LogFileGenerator logback.xml file. Updated code can be accessed in the
+  forked repository mentioned above.
+
+#### Cron
+
+* To run the project periodically in the linux instance, Cron is utilized.
+* All the terminal commands required to run the application are put in a shell script.
+* At the designated time, the cron will execute the shell script and run the application.
+
+![img.png](Docs/img.png)
+
+* Please refer file to see the shell script. -> [LogUploadScript.sh](/Shell-Scripts/LogUploadScript.sh)
+* AWS CLI is used to copy the updated log file to S3 bucket where the lambda function can access it.
+* Please refer below to see the crontab entry.
+* 
+![img_1.png](Docs/img_1.png)
+
+* At 20/40/60 mins of every hour , the [LogUploadScript.sh](/Shell-Scripts/LogUploadScript.sh) will be executed which will add logs messages to S3 in one of the 3 instances.
+* As it can be seen from the cron logs, the file is being executed every day
+  
+![img_2.png](Docs/img_2.png)
 
 ### [Lambda Function](https://aws.amazon.com/lambda/)
 * Lambda function is a serverless compute service which can be triggered by some events.
