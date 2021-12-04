@@ -31,20 +31,17 @@
 The intention of the project is to create a streaming data pipeline. 
 The logs generated over multiple EC2 instances are pushed to S3 bucket which trigger a Lambda function thereby interacting with Akka Actor System to fetch the newly generated log file and transmit it to the Spark Program through Kafka messaging system.
 
-
-
-
 ## Project Structure
 ![Project Structure](Docs/project_structure.png)
 
 This project can be divided into 4 major parts.
 1. Setup LogFileGenerator in multiple EC2 instance and update the log files in S3 bucket periodically.
 2. Create AWS Lambda function to  trigger akka actor whenever new logs arrive.
-3. Setup a Spark project for further processing of the logs message and to trigger the mail.
+3. Set up a Spark project for further processing of the logs message and to trigger the mail.
 
 ## Running the Project
 
-### Steps to setup the environment. 
+### Steps to set up the environment. 
 
 #### Java 8 & sbt
 * Download and install Java 8 on your local system. 
@@ -104,10 +101,9 @@ sbt clean compile
 sbt clean compile run
 ```
 3. Once compiled, please choose `[1] ProducerApp`, to start the execution of actor. 
-![img_1.png](img_1.png)
+![img_1.png](Docs/img1_1.png)
 
-
-## Deployment
+## Deployment on Cloud
 
 ### Create IAM role for EC2
 * Navigate to Amazon AWS IAM service.
@@ -319,7 +315,7 @@ docker run -p 2181:2181 -p 9092:9092 -e ADVERTISED_HOST=127.0.0.1  -e NUM_PARTIT
 ```
 Zookeeper Status:
 
-![img.png](img.png)
+![img.png](Docs/img1.png)
 
 
 ### Spark
@@ -336,6 +332,10 @@ Spark Streaming is an extension of the core Spark API that allows data engineers
 5. Trigger an email to the registered users with the generated report.
 
 
+**Sample Output:**
+
+![img_3.png](Docs/img_3.png)
+
 ### AWS Simple Email Service
 
 Amazon Simple Email Service (SES) is a cost-effective, flexible, and scalable email service that enables developers to send mail from within any application. To set up email service on our EC2 instance, we can follow the link from [AWS SES Setup](https://medium.com/swlh/sending-email-from-aws-lambda-and-ec2-d5233aa0ae24).
@@ -344,6 +344,18 @@ To trigger the email service after we have generated the report, we trigger `ema
 
 **NOTE**: With the zip of the report, another file `noname` gets attached to the mail. This file is created as we have used `uuencode` in our command. The uuencode command converts a file from its binary form into a 7-bit ASCII set of text characters. It is used for email clients that do not support MIME (Multipurpose Internet Mail Extensions).
 It may leave the ascii file as  "noname" or "unnamed"
+
+**Sample Mail Recieved:**
+
+![img_4.png](Docs/img_4.png)
+
+## Testing
+
+To run the test cases for the following project, please run the following command
+```
+sbt test
+```
+![img_2.png](Docs/img1_2.png)
 
 ## References
 1. Dr. Grechanik, Mark, (2020) Cloud Computing: Theory and Practice.
