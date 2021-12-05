@@ -31,6 +31,14 @@
 The intention of the project is to create a streaming data pipeline. 
 The logs generated over multiple EC2 instances are pushed to S3 bucket which trigger a Lambda function thereby interacting with Akka Actor System to fetch the newly generated log file and transmit it to the Spark Program through Kafka messaging system.
 
+### Video Playlist Link
+[Playlist](https://youtube.com/playlist?list=PL3eiWduoLo-W2RRlKnmRhxj9I291Gxnql) <br />
+
+### Individual videos - 
+[Part 1](https://www.youtube.com/watch?v=2dEGQwmlcsY)	
+[Part 2](https://www.youtube.com/watch?v=n-0kMrT9OAE)
+[Part 3](https://www.youtube.com/watch?v=czF-5cx_FhE)
+	
 ## Project Structure
 ![Project Structure](Docs/project_structure.png)
 
